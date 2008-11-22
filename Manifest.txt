@@ -1,0 +1,6 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+lib/array_ordinal_accessor.rb
+test/test_array_ordinal_accessor.rb
