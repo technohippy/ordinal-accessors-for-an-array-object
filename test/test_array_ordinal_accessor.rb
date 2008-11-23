@@ -39,6 +39,18 @@ class TestArrayOrdinalAccessor < Test::Unit::TestCase
     assert_from_ordinal 22, 'twenty second'
   end
 
+  def test_negative_index
+    array = (1..100).to_a
+    assert_equal array[-1], array.first_from_last
+    assert_equal array[-50], array.fiftieth_from_last
+  end
+
+  def test_range
+    array = (1..100).to_a
+    assert_equal array[5..10], array.sixth_to_eleventh
+    assert_equal array[-10..-5], array.tenth_from_last_to_fifth_from_last
+  end
+
   def assert_to_alphabetic(expect, num)
     assert_equal expect, num.to_alphabetic
   end

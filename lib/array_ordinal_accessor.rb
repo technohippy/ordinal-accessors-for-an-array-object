@@ -8,41 +8,41 @@ end
 
 class Integer
   LESS_THAN_20 = [
-    :zero,    :one,     :two,       :three,    :four, 
-    :five,    :six,     :seven,     :eight,    :nine, 
-    :ten,     :eleven,  :twelve,    :thirteen, :fourteen, 
-    :fifteen, :sixteen, :seventeen, :eighteen, :nineteen, 
+    'zero',    'one',     'two',       'three',    'four', 
+    'five',    'six',     'seven',     'eight',    'nine', 
+    'ten',     'eleven',  'twelve',    'thirteen', 'fourteen', 
+    'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 
   ]
   DOUBLE_FIGURES = [
-    nil,    :ten,   :twenty,  :thirty, :forty, 
-    :fifty, :sixty, :seventy, :eighty, :ninety
+    nil,    'ten',   'twenty',  'thirty', 'forty', 
+    'fifty', 'sixty', 'seventy', 'eighty', 'ninety',
   ]
-  HUNDRED = :hundred
+  HUNDRED = 'hundred'
   BIG_FIGURES = [
-    nil,                    :thousand,             :million,          :billion,             :trillion,
-    :quadrillion,           :quintillion,          :sextillion,       :septillion,          :octillion,
-    :nonillion,             :decillion,            :undecillion,      :duodecillion,        :tredecillion,
-    :quattuordecillion,     :quindecillion,        :sexdecillion,     :septendecillion,     :octodecillion,
-    :novemdecillion,        :vigintillion,         :unvigintillion,   :duovigintillion,     :tresvigintillion,
-    :quattuorvigintillion,  :quinquavigintillion,  :sesvigintillion,  :septemvigintillion,  :octovigintillion,
-    :novemvigintillion,     :trigintillion,        :untrigintillion,  :duotrigintillion,    :trestrigintillion,
-    :quattuortrigintillion, :quinquatrigintillion, :sestrigintillion, :septentrigintillion, :octotrigintillion,
-    :noventrigintillion,
+    nil,                     'thousand',             'million',          'billion',             'trillion',
+    'quadrillion',           'quintillion',          'sextillion',       'septillion',          'octillion',
+    'nonillion',             'decillion',            'undecillion',      'duodecillion',        'tredecillion',
+    'quattuordecillion',     'quindecillion',        'sexdecillion',     'septendecillion',     'octodecillion',
+    'novemdecillion',        'vigintillion',         'unvigintillion',   'duovigintillion',     'tresvigintillion',
+    'quattuorvigintillion',  'quinquavigintillion',  'sesvigintillion',  'septemvigintillion',  'octovigintillion',
+    'novemvigintillion',     'trigintillion',        'untrigintillion',  'duotrigintillion',    'trestrigintillion',
+    'quattuortrigintillion', 'quinquatrigintillion', 'sestrigintillion', 'septentrigintillion', 'octotrigintillion',
+    'noventrigintillion',
   ]
-  AND = :and
+  AND = 'and'
 
   SPECIAL_ORDINALS = [
-    nil,    :first, :second, :third,  nil, 
-    :fifth, nil,    nil,     :eighth, :ninth,
+    nil,    'first', 'second', 'third',  nil, 
+    'fifth', nil,    nil,      'eighth', 'ninth',
   ]
   DOUBLE_FIGURES[2..-1].each_with_index do |fig, i|
-    SPECIAL_ORDINALS[(i+2) * 10] = :"#{fig.to_s[0..-2]}ieth"
+    SPECIAL_ORDINALS[(i+2) * 10] = fig.sub(/y$/ , 'ieth')
   end
 
   class <<self
     def from_alphabetic(str, sep=' ')
       ret, tmp = 0, 0
-      (str.is_a?(String) ? str.split(sep) : str).map{|e| e.to_sym}.each do |num|
+      (str.is_a?(String) ? str.split(sep) : str).each do |num|
         case num
         when NilClass, AND;   # ignore
         when *LESS_THAN_20;   tmp += LESS_THAN_20.index num
@@ -56,16 +56,16 @@ class Integer
     end
 
     def from_ordinal(str, sep=' ')
-      array = (str.is_a?(String) ? str.split(sep) : str).map{|e| e.to_sym}
+      array = str.is_a?(String) ? str.split(sep) : str
       array[-1] =
         if SPECIAL_ORDINALS.include?(array.last)
           if (idx = SPECIAL_ORDINALS.index(array.last)) < 20
             LESS_THAN_20[idx]
           else
-            array.last.to_s.sub(/ieth$/, 'y').to_sym
+            array.last.sub(/ieth$/, 'y')
           end
         else
-          array[-1].to_s[0...-2].to_sym
+          array.last.sub(/th$/, '')
         end
       from_alphabetic array
     end
@@ -95,7 +95,7 @@ class Integer
   private
 
   def to_alphabetic_array
-    return [:zero] if self == 0
+    return ['zero'] if self == 0
 
     triples = []
     num = self
@@ -108,7 +108,7 @@ class Integer
     ret = []
     triples.each_with_index do |n, i|
       array = to_alphabetic_array_less_than_1000 n, ret.empty?
-      unless array == [:zero]
+      unless array == ['zero']
         array << BIG_FIGURES[i] unless i == 0
         ret.unshift array 
       end
@@ -124,7 +124,7 @@ class Integer
       elsif special = SPECIAL_ORDINALS[(DOUBLE_FIGURES.index(alphabetics.last) || 0) * 10]
         special
       else
-        :"#{alphabetics.last}th"
+        "#{alphabetics.last}th"
       end
     alphabetics
   end
@@ -135,7 +135,7 @@ class Integer
       [LESS_THAN_20[num]]
     when 20..99
       single = to_alphabetic_array_less_than_1000(num % 10)
-      if single == [:zero]
+      if single == ['zero']
         [DOUBLE_FIGURES[num / 10]]
       else
         [DOUBLE_FIGURES[num / 10], *single]
@@ -144,7 +144,7 @@ class Integer
       double = to_alphabetic_array_less_than_1000(num % 100)
       if not last
         [LESS_THAN_20[num / 100], HUNDRED, *double]
-      elsif double == [:zero]
+      elsif double == ['zero']
         [LESS_THAN_20[num / 100], HUNDRED]
       else
         [LESS_THAN_20[num / 100], HUNDRED, AND, *double]
@@ -157,13 +157,24 @@ class Array
   def method_missing(symbol, *args, &block)
      name = symbol.to_s
     if name[-1] == ?=
-      index = Integer.from_ordinal(name[0...-1], '_') - 1
-      self[index] = args.first
+      self[ordinal_index(name.sub(/=$/, ''))] = args.first
     else
-      index = Integer.from_ordinal(name, '_') - 1
-      self[index]
+      self[ordinal_index(name)]
     end
   rescue
     super
+  end
+
+  private
+
+  def ordinal_index(str)
+    case str
+    when /^(.+)_to_(.+)$/
+      ordinal_index($1)..ordinal_index($2)
+    when /^(.+)_from_last$/
+      -(ordinal_index($1) + 1)
+    else
+      Integer.from_ordinal(str, '_') - 1
+    end
   end
 end
