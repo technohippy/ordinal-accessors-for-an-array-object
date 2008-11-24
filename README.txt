@@ -29,9 +29,9 @@ http://github.com/rails/rails/commit/22af62cf486721ee2e45bb720c42ac2f4121faf4
   => 182771
   >> array.seventeen_thousand_two_hundred_and_thirty_from_last
   => 182771
-  >> array.sixty_one_thousand_one_hundred_and_twelveth_to_sixty_one_thousand_one_hundred_and_twentieth
-  => [61112, 61113, 61114, 61115, 61116, 61117, 61118, 61119, 61120]
   >> array[61111..61119]
+  => [61112, 61113, 61114, 61115, 61116, 61117, 61118, 61119, 61120]
+  >> array.sixty_one_thousand_one_hundred_and_twelveth_to_sixty_one_thousand_one_hundred_and_twentieth
   => [61112, 61113, 61114, 61115, 61116, 61117, 61118, 61119, 61120]
 
 == INSTALL:
